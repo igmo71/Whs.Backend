@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection;
 using Whs.Application;
 using Whs.Application.Common.Mappings;
@@ -33,6 +34,18 @@ namespace Whs.WebApi
                 });
             });
 
+            builder.Services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "http://localhost:44386";
+                    options.Audience = "WhsWebApi";
+                    options.RequireHttpsMetadata = false;
+                });
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -46,8 +59,9 @@ namespace Whs.WebApi
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-
-            //app.MapGet("/", () => "Hello World!");
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.MapControllers();
 
             app.Run();

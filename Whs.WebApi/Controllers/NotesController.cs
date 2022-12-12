@@ -6,6 +6,7 @@ using Whs.Application.Services.Notes.Commands.UpdateNote;
 using Whs.Application.Services.Notes.Queries.GetNoteDetails;
 using Whs.Application.Services.Notes.Queries.GetNoteList;
 using Whs.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Whs.WebApi.Controllers
 {
@@ -17,6 +18,7 @@ namespace Whs.WebApi.Controllers
         public NotesController(IMapper mapper) => _mapper = mapper;
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<NoteListVm>> GetAll()
         {
             var query = new GetNoteListQuery { UserId = UserId };
@@ -25,6 +27,7 @@ namespace Whs.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<NoteDetailsVm>> Get(Guid id)
         {
             var query = new GetNoteDetailsQuery { Id = id, UserId = UserId };
@@ -33,6 +36,7 @@ namespace Whs.WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Guid>> Create([FromBody] CreateNoteDto createNoteDto)
         {
             var command = _mapper.Map<CreateNoteCommand>(createNoteDto);
@@ -42,6 +46,7 @@ namespace Whs.WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
         {
             var command = _mapper.Map<UpdateNoteCommand>(updateNoteDto);
@@ -51,6 +56,7 @@ namespace Whs.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> Delete(Guid id)
         {
             var command = new DeleteNoteCommand { Id= id, UserId = UserId };
