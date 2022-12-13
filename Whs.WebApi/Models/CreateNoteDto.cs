@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Whs.Application.Common.Mappings;
 using Whs.Application.Services.Notes.Commands.CreateNote;
+using System.ComponentModel.DataAnnotations;
 
 namespace Whs.WebApi.Models
 {
     public class CreateNoteDto : IMapWith<CreateNoteCommand>
     {
+        [Required]
         public string? Title { get; set; }
         public string? Details { get; set; }
 
