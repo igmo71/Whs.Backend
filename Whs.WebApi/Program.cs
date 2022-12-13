@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using Whs.Application;
 using Whs.Application.Common.Mappings;
@@ -41,17 +44,15 @@ namespace Whs.WebApi
             })
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "http://localhost:44386";
+                    options.Authority = "https://localhost:44386";
                     options.Audience = "WhsWebApi";
                     options.RequireHttpsMetadata = false;
                 });
 
-            builder.Services.AddSwaggerGen(config =>
-            {
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                config.IncludeXmlComments(xmlPath);
-            });
+            builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
+            builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>,ConfigureSwaggerOptions>();
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddApiVersioning();
 
             var app = builder.Build();
 
@@ -62,18 +63,25 @@ namespace Whs.WebApi
                 app.UseDeveloperExceptionPage();
             }
             app.UseSwagger();
+
+            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             app.UseSwaggerUI(config =>
             {
-                config.RoutePrefix = string.Empty;
-                config.SwaggerEndpoint("swagger/v1/swagger.json", "Whs API");
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    config.SwaggerEndpoint( $"/swagger/{description.GroupName}/swagger.json",description.GroupName.ToUpperInvariant());
+                    config.RoutePrefix = string.Empty;
+                }
             });
+
             app.UseCustomEcxeptionHandler();
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
-            
+            app.UseApiVersioning();            
+
             app.MapControllers();
 
             app.Run();

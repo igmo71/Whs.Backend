@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Whs.Application.Services.Notes.Commands.CreateNote;
 using Whs.Application.Services.Notes.Commands.DeleteNote;
@@ -6,18 +7,18 @@ using Whs.Application.Services.Notes.Commands.UpdateNote;
 using Whs.Application.Services.Notes.Queries.GetNoteDetails;
 using Whs.Application.Services.Notes.Queries.GetNoteList;
 using Whs.WebApi.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace Whs.WebApi.Controllers
 {
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [Produces("application/json")]
-    [Route("api/[controller]")]
-    public class NotesController : BaseController
+    [Route("api/{version:apiVersion}/[controller]")]
+    public class NoteController : BaseController
     {
-        private IMapper _mapper;
-        
-        public NotesController(IMapper mapper) => _mapper = mapper;
+        private readonly IMapper _mapper;
+
+        public NoteController(IMapper mapper) => _mapper = mapper;
 
         /// <summary>
         /// Gets the list of notes
@@ -31,11 +32,14 @@ namespace Whs.WebApi.Controllers
         /// <response code="401">If the user is unauthorized</response>
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<NoteListVm>> GetAll()
         {
-            var query = new GetNoteListQuery { UserId = UserId };
+            var query = new GetNoteListQuery
+            {
+                UserId = UserId
+            };
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
@@ -45,19 +49,23 @@ namespace Whs.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        /// GET /note/3D2DA39D-6FCE-4B79-A7B0-37F1B9DC37DA
+        /// GET /note/D34D349E-43B8-429E-BCA4-793C932FD580
         /// </remarks>
         /// <param name="id">Note id (guid)</param>
         /// <returns>Returns NoteDetailsVm</returns>
         /// <response code="200">Success</response>
-        /// <response code="401">If the user is unauthorized</response>
+        /// <response code="401">If the user in unauthorized</response>
         [HttpGet("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<NoteDetailsVm>> Get(Guid id)
         {
-            var query = new GetNoteDetailsQuery { Id = id, UserId = UserId };
+            var query = new GetNoteDetailsQuery
+            {
+                UserId = UserId,
+                Id = id
+            };
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
@@ -69,7 +77,7 @@ namespace Whs.WebApi.Controllers
         /// Sample request:
         /// POST /note
         /// {
-        ///     title: "note title"
+        ///     title: "note title",
         ///     details: "note details"
         /// }
         /// </remarks>
@@ -85,8 +93,8 @@ namespace Whs.WebApi.Controllers
         {
             var command = _mapper.Map<CreateNoteCommand>(createNoteDto);
             command.UserId = UserId;
-            var id = await Mediator.Send(command);
-            return CreatedAtAction("Get", id);
+            var noteId = await Mediator.Send(command);
+            return Ok(noteId);
         }
 
         /// <summary>
@@ -99,15 +107,15 @@ namespace Whs.WebApi.Controllers
         ///     title: "updated note title"
         /// }
         /// </remarks>
-        /// <param name="updateNoteDto"></param>
-        /// <returns>No Content</returns>
+        /// <param name="updateNoteDto">UpdateNoteDto object</param>
+        /// <returns>Returns NoContent</returns>
         /// <response code="204">Success</response>
         /// <response code="401">If the user is unauthorized</response>
         [HttpPut]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
+        public async Task<IActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
         {
             var command = _mapper.Map<UpdateNoteCommand>(updateNoteDto);
             command.UserId = UserId;
@@ -119,8 +127,8 @@ namespace Whs.WebApi.Controllers
         /// Deletes the note by id
         /// </summary>
         /// <remarks>
-        /// Sample rquest:
-        /// DELETE /note/1D249BFF-F3EC-4431-96C0-499933D60A0A
+        /// Sample request:
+        /// DELETE /note/88DEB432-062F-43DE-8DCD-8B6EF79073D3
         /// </remarks>
         /// <param name="id">Id of the note (guid)</param>
         /// <returns>Returns NoContent</returns>
@@ -130,9 +138,13 @@ namespace Whs.WebApi.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var command = new DeleteNoteCommand { Id= id, UserId = UserId };
+            var command = new DeleteNoteCommand
+            {
+                Id = id,
+                UserId = UserId
+            };
             await Mediator.Send(command);
             return NoContent();
         }
