@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whs.Application", "Whs.Appl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whs.Persistence", "Whs.Persistence\Whs.Persistence.csproj", "{EBE70E83-84B6-4351-9E0A-3CC16FC70B9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whs.WebApi", "Whs.WebApi\Whs.WebApi.csproj", "{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whs.WebApi", "Whs.WebApi\Whs.WebApi.csproj", "{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whs.Tests", "Whs.Tests\Whs.Tests.csproj", "{30A74539-4C04-4B10-BB23-5F0AE51D7103}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30A74539-4C04-4B10-BB23-5F0AE51D7103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30A74539-4C04-4B10-BB23-5F0AE51D7103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30A74539-4C04-4B10-BB23-5F0AE51D7103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30A74539-4C04-4B10-BB23-5F0AE51D7103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 		{1F593022-8489-4B0A-B994-FB470369CA66} = {53BF6FF8-50D8-46AA-AE9B-69B4C4721C65}
 		{EBE70E83-84B6-4351-9E0A-3CC16FC70B9A} = {5448A8E1-19A5-413D-965C-C68C3C65DF0B}
 		{073EC5C3-A26B-4E9A-A64C-FC8A76C7D77F} = {2859AA03-016D-49D1-A66E-F97ACD7ED7AD}
+		{30A74539-4C04-4B10-BB23-5F0AE51D7103} = {76ADBAA5-D1A6-4228-9BF1-664D5670EC7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF1EDB8C-EA5B-47F0-838E-888C14E56B24}
